@@ -2,6 +2,7 @@
 # cash / credit) based on a list of options
 def string_checker(question, num_letters, valid_responses):
 
+
     while True:
 
         response = input(question).lower()
@@ -24,10 +25,14 @@ for case in range(0, 5):
     print("you chose", want_instructions)
 
 for case in range(0, 5):
-    pay_method = string_checker("...",
+    pay_method = string_checker("Choose a payment method (cash / credit): ",
                                 2, payment_list)
 
-print("You chose", pay_method)
+
+    print("You chose", pay_method)
+
+
+
 
 
 
