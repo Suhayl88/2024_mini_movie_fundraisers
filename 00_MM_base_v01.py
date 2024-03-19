@@ -1,6 +1,31 @@
 import pandas
+import random
+from datetime import date
+
 
 # functions go here
+
+# shows instructions
+def show_instructions():
+    print('''\n
+***** Instructions *****
+
+for each ticket, enter ...
+- The person's name (cant be blank)
+- Age (between 12 and 120)
+- Payment method (cash / credit) 
+
+When you have entered all the users, press 'xxx' to quit.
+
+the program will then display the ticket details
+including the cost of each ticket, the total cost
+and the total profit.
+
+This information will also be automatically written to 
+a text file.
+
+***************************''')
+
 
 # checks that user response is not blank
 def not_blank(question):
@@ -12,21 +37,6 @@ def not_blank(question):
             print("sorry this cant be blank. Please reattempt")
         else:
             return response
-
-
-# checks users enter an integer to a given question
-def num_check(question):
-    while True:
-
-        try:
-            response = int(input(question))
-            return response
-
-        except ValueError:
-            print("Please enter an integer.")
-
-
-# main routine starts here
 
 
 # Calculate the ticket price based on the age
@@ -46,11 +56,10 @@ def calc_ticket_price(var_age):
     return price
 
 
-# checks that users enter a valid response (eg yes / no
+# checks that users enter a valid response (eg: yes / no
 # cash / credit) based on a list of options
 def string_checker(question, num_letters, valid_responses):
-    error = "please choose {} or {}".format(valid_responses[0],
-                                            valid_responses[1])
+    error = f"please choose {valid_responses[0]} or {valid_responses[1]}"
 
     if num_letters == 1:
         short_version = 1
@@ -67,13 +76,25 @@ def string_checker(question, num_letters, valid_responses):
         print(error)
 
 
+# checks users enter an integer to a given question
+def num_check(question):
+    while True:
+
+        try:
+            response = int(input(question))
+            return response
+
+        except ValueError:
+            print("Please enter an integer.")
+
+
 # currency formatting function
 def currency(x):
     return "${:.2f}".format(x)
 
 
 # set maximum number of tickets below
-MAX_TICKETS = 100
+MAX_TICKETS: int = 100
 tickets_sold = 0
 
 yes_no_list = ["yes", "no"]
@@ -96,7 +117,7 @@ want_instructions = string_checker("Do you want to read the "
                                    1, yes_no_list)
 
 if want_instructions == "yes":
-    print("Instructions go here")
+    show_instructions()
 
 print()
 
@@ -104,16 +125,22 @@ print()
 while tickets_sold < MAX_TICKETS:
     name = not_blank("Enter your name(or 'xxx' to quit ")
 
-    if name == 'xxx':
+    if name == 'xxx' and len(all_names) > 0:
         break
+
+    elif name == 'xxx':
+        print("You must sell at least ONE ticket before quitting")
+        continue
 
     age = num_check("Age: ")
 
+    # check user is between 12 and 120 (inclusive)
     if 12 <= age <= 120:
         pass
     elif age < 12:
         print("sorry you are way to young for this movie")
         continue
+
     else:
         print("?? That looks like a typo, please try again.")
         continue
@@ -141,7 +168,6 @@ while tickets_sold < MAX_TICKETS:
 
 # create data frame from dictionary to organise information
 mini_movie_frame = pandas.DataFrame(mini_movie_dict)
-mini_movie_frame = mini_movie_frame.set_index('Name')
 
 # Calculate the total ticket cost (ticket + surcharge)
 mini_movie_frame['Total'] = mini_movie_frame['Surcharge'] \
@@ -154,7 +180,41 @@ mini_movie_frame['Profit'] = mini_movie_frame['Ticket Price'] - 5
 total = mini_movie_frame['Total'].sum()
 profit = mini_movie_frame['Profit'].sum()
 
+# choose winner and look up total won
+winner_name = random.choice(all_names)
+win_index = all_names.index(winner_name)
+total_won = mini_movie_frame.at[win_index, 'Total']
+
 # Currency Formatting (uses currency function)
 add_dollars = ['Ticket Price', 'Surcharge', 'Total', 'Profit']
 for var_item in add_dollars:
     mini_movie_frame[var_item] = mini_movie_frame[var_item].apply(currency)
+
+# set index at end (before printing)
+mini_movie_frame = mini_movie_frame.set_index('Name')
+
+print("---- Ticket Data ----")
+print()
+
+# output table with ticket data
+print(mini_movie_frame)
+
+print()
+print("----- Ticket Cost / Profit -----")
+
+# output total ticket sales and profit
+print("Total Ticket Sales: ${:.2f}".format(total))
+print("Total Profit : ${:.2f}".format(profit))
+
+print()
+print('---- Raffle Winner ----')
+print("Congratulations {}. You have won ${:.2f} ie: your "
+      "ticket is free!".format(winner_name, total_won))
+
+print()
+# output number of tickets sold
+if tickets_sold == MAX_TICKETS:
+    tickets_sold = 3
+
+
+
