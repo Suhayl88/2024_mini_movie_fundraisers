@@ -193,6 +193,44 @@ for var_item in add_dollars:
 # set index at end (before printing)
 mini_movie_frame = mini_movie_frame.set_index('Name')
 
+# **** Get current date for heading and filename ****
+# get today's date
+today = date.today()
+
+# Get day, month and year as individual strings
+day = today.strftime("%d")
+month = today.strftime("%m")
+year = today.strftime("%Y")
+
+heading = "\n---- Mini Movie Fundraiser Ticket Data ({}/{}/{}) ----\n"
+filename = "MMF_{}_{}_{}".format(year, month, day)
+
+# Change frame to a string so that we can export it to file
+mini_movie_string = pandas.DataFrame.to_string(mini_movie_frame)
+
+# create strings for printing
+ticket_cost_heading = "\n----- Ticket Cost / Profit -----"
+total_ticket_sales = "Total Profit : ${:.2f}".format(total)
+total_profit = "Total Profit : ${:.2f}".format(profit)
+
+# edit text below!! It needs to work if we have unsold tickets
+if tickets_sold == MAX_TICKETS:
+    sales_status = "\n*** All the tickets hae been sold ***"
+else:
+    sales_status = "\n **** you have sold {} out of {} " \
+                    "Tickets *****".format(tickets_sold, MAX_TICKETS)
+
+winner_heading = "\n---- Raffle Winner -----"
+winner_text = "The==he winner of the raffle is {}.  "\
+                "They have won ${:.2f}. ie: their ticket is " \
+                "free".format(winner_name, total_won)
+
+# List holding content to print / write to file
+to_write = [heading, mini_movie_string, ticket_cost_heading,
+            total_ticket_sales, total_profit, sales_status,
+            winner_heading, winner_text]
+
+
 print("---- Ticket Data ----")
 print()
 
