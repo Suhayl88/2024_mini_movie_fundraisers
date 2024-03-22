@@ -94,7 +94,7 @@ def currency(x):
 
 
 # set maximum number of tickets below
-MAX_TICKETS: int = 100
+MAX_TICKETS = 100
 tickets_sold = 0
 
 yes_no_list = ["yes", "no"]
@@ -202,7 +202,7 @@ day = today.strftime("%d")
 month = today.strftime("%m")
 year = today.strftime("%Y")
 
-heading = "\n---- Mini Movie Fundraiser Ticket Data ({}/{}/{}) ----\n"
+heading = f"\n---- Mini Movie Fundraiser Ticket Data ({day}/{month}/{year}) ----\n"
 filename = "MMF_{}_{}_{}".format(year, month, day)
 
 # Change frame to a string so that we can export it to file
@@ -231,28 +231,19 @@ to_write = [heading, mini_movie_string, ticket_cost_heading,
             winner_heading, winner_text]
 
 
-print("---- Ticket Data ----")
-print()
+# print output
+for item in to_write:
+    print(item)
 
-# output table with ticket data
-print(mini_movie_frame)
+# write output to file
+# create file to hold data (add .txt extension)
+write_to = "{}.txt".format(filename)
+text_file = open(write_to, "w+")
 
-print()
-print("----- Ticket Cost / Profit -----")
+for item in to_write:
+    text_file.write(item)
+    text_file.write("\n")
 
-# output total ticket sales and profit
-print("Total Ticket Sales: ${:.2f}".format(total))
-print("Total Profit : ${:.2f}".format(profit))
-
-print()
-print('---- Raffle Winner ----')
-print("Congratulations {}. You have won ${:.2f} ie: your "
-      "ticket is free!".format(winner_name, total_won))
-
-print()
-# output number of tickets sold
-if tickets_sold == MAX_TICKETS:
-    tickets_sold = 3
-
+# close file
 
 
